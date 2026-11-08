@@ -1,7 +1,7 @@
 {
   "name": "tacit",
   "version": "1.1.0",
-  "description": "Find what you keep repeating to Claude Code and turn it into CLAUDE.md rules, Skills, hooks and subagents. Runs locally; your history never leaves your machine.",
+  "description": "Find what you keep repeating to Claude Code and turn it into CLAUDE.md rules, Skills, hooks and subagents, and see exactly what every new chat starts with. Runs locally; your history never leaves your machine.",
   "type": "module",
   "bin": {
     "tacit": "bin/tacit.js"

@@ -6,6 +6,7 @@
 
 Tacit reads your Claude Code history on your own machine, finds the instructions you repeat across sessions,
 and turns each one into a CLAUDE.md rule, a Skill, a hook, a subagent or a slash command.
+It also shows exactly which memory files every new chat starts with, and lets you switch them off, trim them or undo changes.
 
 [![CI](https://github.com/abuhuraira99/tacit/actions/workflows/ci.yml/badge.svg)](https://github.com/abuhuraira99/tacit/actions/workflows/ci.yml)
 ![Node](https://img.shields.io/badge/node-%E2%89%A518.17-141414)

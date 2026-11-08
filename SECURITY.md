@@ -8,6 +8,8 @@ default:
 - A strict Content-Security-Policy applies; the UI loads nothing from the network.
 - Secrets in prompts are redacted before they are cached, displayed or exported.
 - Files are written only inside folders from your history or the Claude config folder, after confirmation, with backups.
+- The Startup memory page only reads or changes files named `CLAUDE.md` or `CLAUDE.local.md` inside those folders.
+  Switching a file off renames it; nothing is deleted, and every change can be restored from a backup.
 - API keys entered in Settings are held in memory for the current run and never written to disk.
 
 ## Reporting a vulnerability
