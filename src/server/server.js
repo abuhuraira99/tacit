@@ -114,6 +114,15 @@ export function createServer(app, { port = 0, host = '127.0.0.1' } = {}) {
       return send(res, 200, { markdown: md });
     }
 
+    if (p === '/api/memory' && method === 'GET') return send(res, 200, app.startupMemory());
+    if (p === '/api/memory/file' && method === 'GET') return send(res, 200, app.startupFile(String(q.path || '')));
+    m = /^\/api\/memory\/(toggle|rule|unpause|add|save|preview|compare|restore)$/.exec(p);
+    if (m && method === 'POST') {
+      const b = await readJson(req);
+      if (['toggle', 'rule', 'unpause', 'add', 'save', 'restore'].includes(m[1]) && b.confirm !== true) return send(res, 400, { error: 'Confirm the change first.' });
+      return send(res, 200, app.startupAction(m[1], b));
+    }
+
     if (p === '/api/forge/draft' && method === 'POST') {
       const b = await readJson(req);
       return send(res, 200, app.draft(b.patternId, b.kind, b));

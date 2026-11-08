@@ -6,6 +6,7 @@ const P = {
   repeats: 'M4 7c5-3 11-3 16 0M4 12c5-3 11-3 16 0M4 17c5-3 11-3 16 0',
   draft: 'M5 19h4L19.5 8.5a2.1 2.1 0 0 0-3-3L6 16v3zM14.5 7.5l3 3',
   sessions: 'M4 6h16M4 12h16M4 18h10',
+  startup: 'M5 5h14v10H5zM9 19h6M12 15v4M9 9l2 2-2 2M13 13h2',
   memory: 'M6 4h9l3 3v13H6zM9 10h6M9 14h6M9 18h3',
   report: 'M7 4h10v16H7zM10 8h4M10 12h4M10 16h2',
   settings: 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1',

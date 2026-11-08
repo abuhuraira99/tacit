@@ -37,6 +37,7 @@ Tacit reads it, groups the different ways you said the same thing, and drafts th
 | **Drafts** | Turns any repeat into a CLAUDE.md rule, Skill, hook, subagent or slash command, scoped to one project or all of them. Saves it into the right file with a backup, or lets you copy it. |
 | **Trigger check** | Tests a Skill's description against every prompt you've written, so you know whether Claude would actually load it for the requests it's meant for. |
 | **Memory health** | Grades each CLAUDE.md against how you really work: rules you still have to repeat, habits with no rule, duplicates, contradictions, soft wording and bloat. |
+| **Startup memory** | Shows exactly what every new chat starts with: your personal `~/.claude/CLAUDE.md`, each project's CLAUDE.md files and their `@` imports, with token counts. Read them, switch a file off for new chats, pause or remove single rules, add rules, edit with a preview of the changes, and undo anything Tacit changed, including rules saved from Repeats. |
 | **Sessions** | Shows every conversation with its tokens, cost, context curve and compactions, and points out what filled the context window. |
 | **Report** | Exports a Markdown retrospective you can keep or share. Secrets are redacted. |
 | **Refine with Claude** *(optional)* | Rewrites a draft in your own words using the Claude API or your local Claude Code. Off unless you set it up. |
@@ -49,6 +50,9 @@ Tacit reads it, groups the different ways you said the same thing, and drafts th
 <tr>
 <td><img src="docs/screenshots/memory.png" alt="Memory health report for CLAUDE.md files"></td>
 <td><img src="docs/screenshots/session.png" alt="Session detail with context curve and findings"></td>
+</tr>
+<tr>
+<td colspan="2"><img src="docs/screenshots/startup.png" alt="Startup memory: the personal CLAUDE.md with its token count, rules grouped by heading, a rule added by Tacit and a paused rule"></td>
 </tr>
 </table>
 
@@ -106,6 +110,7 @@ flowchart LR
     G --> H["Trigger check"]
     G -->|confirm + backup| I["CLAUDE.md, .claude/skills,<br/>.claude/agents, settings.json"]
     E --> J["Memory health<br/>vs your CLAUDE.md files"]
+    I --> L["Startup memory<br/>read, switch off, pause, edit, undo"]
     G -.->|optional| K["Claude API / Claude Code<br/>Refine with Claude"]
 ```
 
@@ -121,6 +126,10 @@ flowchart LR
    read-only subagents, pasted briefs become slash commands, and the rest become CLAUDE.md rules.
 5. **Draft and save.** Drafts are generated from templates that follow Claude Code's formats. Writes only happen inside
    folders from your history or `~/.claude`, after you confirm, with a backup in `~/.tacit/backups`.
+6. **Review what loads.** Startup memory lists the CLAUDE.md files Claude Code reads before your first message. Switching
+   one off renames it to `CLAUDE.md.disabled`, so nothing is deleted. Paused rules are kept in `~/.tacit/parked-rules.json`
+   and go back under the heading they came from. Every change is logged in `~/.tacit/history.json` with a backup to compare
+   or restore.
 
 More detail in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). A full walkthrough of every screen is in [docs/MANUAL.md](docs/MANUAL.md).
 
@@ -209,6 +218,7 @@ Only the draft and the quotes behind it are sent. Nothing else from your history
 - Prompts are redacted for API keys, tokens, JWTs, private keys and passwords before they are cached, shown or exported.
 - Files are only written inside your project folders or `~/.claude`, after confirmation, with a backup first.
   `settings.json` is merged, never replaced, and is left alone if it isn't valid JSON.
+- The Startup memory page only opens or changes files named `CLAUDE.md` or `CLAUDE.local.md` inside those same folders.
 
 See [SECURITY.md](SECURITY.md) to report a problem.
 

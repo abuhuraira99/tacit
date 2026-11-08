@@ -76,6 +76,31 @@ A score for your personal CLAUDE.md and each project's, with issues ranked by se
 | Duplicate / contradiction | Two rules saying the same, or opposite, things. |
 | Soft wording | "Try to", "if possible", "ideally": easy to skip. |
 
+## Startup memory
+
+![Startup memory](screenshots/startup.png)
+
+Claude Code reads your CLAUDE.md files at the start of every new chat, before your first message. This page shows those
+files and what they cost.
+
+- **The black card** shows how many tokens your personal `~/.claude/CLAUDE.md` (plus anything it imports) adds to every new
+  chat, in every project.
+- **The list on the left** has your personal file first, then each project that has a `CLAUDE.md`, `.claude/CLAUDE.md` or
+  `CLAUDE.local.md`. *On* means new chats load it; *Off* means you switched it off here.
+
+Pick a file to see four tabs:
+
+| Tab | What you can do |
+|---|---|
+| Read | The exact text Claude gets, and any `@` imported files with their size. Imports inside code are ignored, as Claude Code does. |
+| Rules | Every list item, grouped by heading, with its line number. **Add a rule** under any heading (near-duplicates are skipped). **Pause** takes a rule out of the file but keeps it in Tacit, so **Turn back on** puts it back under the same heading. **Remove** deletes it (the file is backed up first). Rules Tacit added are marked *Added by Tacit*. |
+| Edit | Change the file directly. **Show changes** previews a line-by-line diff; **Save** shows the diff again before writing. |
+| Changes | Every change Tacit made to this file, including rules you saved from Repeats or Memory health. **Compare** shows what restoring that backup would change; **Restore** puts it back. |
+
+**Switch off for new chats** renames the file to `CLAUDE.md.disabled`, so Claude Code no longer loads it. Nothing is
+deleted, and **Switch on for new chats** renames it back. Chats that are already open keep what they read when they
+started; the change applies from the next new chat.
+
 ## Report
 
 A Markdown retrospective: totals, the habits you repeat with suggested fixes, reused briefs, memory health and your heaviest
@@ -93,6 +118,8 @@ sessions. Copy it or download a `.md` file.
 |---|---|
 | `~/.tacit/cache/` | Parsed summaries, so the next start is instant. Safe to delete. |
 | `~/.tacit/backups/` | A copy of every file before Tacit changed it. |
+| `~/.tacit/history.json` | A log of every change Tacit made to your files, shown under Startup memory → Changes. |
+| `~/.tacit/parked-rules.json` | Rules you paused, so you can turn them back on. |
 | `~/.tacit/demo/` | Sample history and projects for `--demo`. |
 
 ## Uninstall

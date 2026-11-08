@@ -18,7 +18,8 @@ flowchart TB
       AN --> PA["patterns.js<br/>habit mining"]
       PA --> FO["forge.js<br/>drafts + trigger check"]
       PA --> HE["health.js<br/>memory health"]
-      FO --> AP["apply.js<br/>safe writes"]
+      FO --> AP["apply.js<br/>safe writes + change log"]
+      AP --> ME["memory.js<br/>startup memory"]
       FO -.-> AI["ai.js<br/>refine (optional)"]
       AN --> RE["report.js"]
     end
@@ -30,6 +31,7 @@ flowchart TB
     T --> P
     S --> P
     M --> HE
+    M --> ME
     Core --> CLI
     Core --> SRV --> WEB
 ```
@@ -94,6 +96,23 @@ everything else, and examples of each.
 after resolving the path. Existing files are copied to `~/.tacit/backups/<timestamp>/` first and written atomically via a
 temporary file. Rules are de-duplicated by similarity, hooks are merged into `settings.json` (an invalid file aborts the
 write), and new files are never replaced without an explicit overwrite.
+
+## Startup memory
+
+`memory.js` lists the files Claude Code loads at startup: `CLAUDE.md` in the Claude config folder, and `CLAUDE.md`,
+`.claude/CLAUDE.md` and `CLAUDE.local.md` in each project folder from the history. For each file it extracts list-item
+rules with their heading and line, resolves `@` imports (skipping code spans and fences), and estimates tokens.
+
+- **Switch off** renames `CLAUDE.md` to `CLAUDE.md.disabled`; switching on renames it back.
+- **Pause** removes the rule's line (found by line number, or by text if the file changed) and stores it in
+  `~/.tacit/parked-rules.json` keyed by the file path, together with its heading, so it can be appended back to the same section.
+- **Edit, add, remove, restore** all go through `backupFile` and `atomicWrite` from `apply.js`.
+- Every write, including drafts saved from Repeats, is appended to `~/.tacit/history.json` (newest first, capped at 500).
+  Rules whose text matches a logged addition are marked *Added by Tacit*.
+- Diffs use a longest-common-subsequence line diff with unchanged runs collapsed.
+
+Every path is checked twice: the file name must be `CLAUDE.md` or `CLAUDE.local.md`, and the resolved path must sit inside
+an allowed root. State-changing endpoints also require `confirm: true` in the body.
 
 ## Server
 

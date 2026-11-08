@@ -23,7 +23,37 @@ export function applyArtifact(artifact, { allowedRoots, overwrite = false, conte
   else if (artifact.mode === 'merge-json') result = mergeJson(target, body);
   else result = createFile(target, body, overwrite);
 
+  if (result.status === 'written') {
+    recordChange({ path: target, action: result.action, kind: artifact.kind || null, text: artifact.mode === 'append-rule' ? body.trim() : null, backup });
+  }
   return { ...result, path: target, backup, existed };
+}
+
+// ---------- change history ----------
+
+function historyFile() {
+  return path.join(tacitHome(), 'history.json');
+}
+
+export function readHistory() {
+  try {
+    const list = JSON.parse(fs.readFileSync(historyFile(), 'utf8'));
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Remember every write Tacit makes, so changes can be reviewed and undone later. */
+export function recordChange(entry) {
+  try {
+    const list = readHistory();
+    list.unshift({ ts: new Date().toISOString(), ...entry });
+    ensureDir(tacitHome());
+    atomicWrite(historyFile(), JSON.stringify(list.slice(0, 500), null, 2));
+  } catch {
+    /* history is a convenience; never fail a write because of it */
+  }
 }
 
 export function assertInside(target, roots = []) {
@@ -37,7 +67,7 @@ export function assertInside(target, roots = []) {
 
 export class SafeWriteError extends Error {}
 
-function backupFile(file) {
+export function backupFile(file) {
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   const dir = ensureDir(path.join(tacitHome(), 'backups', stamp));
   const name = file.replace(/^[A-Za-z]:/, (m) => m[0]).replace(/[\\/:]+/g, '__');
@@ -46,7 +76,7 @@ function backupFile(file) {
   return dest;
 }
 
-function appendRule(file, ruleLine, section) {
+export function appendRule(file, ruleLine, section) {
   const line = ruleLine.trim().startsWith('-') ? ruleLine.trim() : `- ${ruleLine.trim()}`;
   let text = '';
   try {
@@ -130,7 +160,7 @@ function createFile(file, body, overwrite) {
   return { status: 'written', action: 'created' };
 }
 
-function atomicWrite(file, data) {
+export function atomicWrite(file, data) {
   const tmp = `${file}.tacit-${process.pid}.tmp`;
   fs.writeFileSync(tmp, data, 'utf8');
   fs.renameSync(tmp, file);

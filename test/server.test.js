@@ -127,3 +127,31 @@ test('bad JSON bodies are rejected cleanly', async () => {
   const r = await raw('/api/forge/draft', { method: 'POST', headers: { 'content-type': 'application/json', 'x-tacit-token': token, host: `127.0.0.1:${port}` }, body: '{oops' });
   assert.equal(r.status, 400);
 });
+
+test('startup memory: list, read, toggle and refuse paths outside memory files', async () => {
+  const list = await json('/api/memory');
+  assert.equal(list.status, 200);
+  const globalFile = list.data.scopes[0].files[0];
+  assert.equal(globalFile.path, path.join(demo.claudeHome, 'CLAUDE.md'));
+  assert.ok(list.data.scopes.length >= 2, 'demo projects with a CLAUDE.md are listed');
+
+  const read = await json(`/api/memory/file?path=${encodeURIComponent(globalFile.path)}`);
+  assert.equal(read.status, 200);
+  assert.ok(read.data.content.length > 0);
+
+  assert.equal((await post('/api/memory/toggle', { path: globalFile.path, enabled: false })).status, 400, 'needs confirm');
+  assert.equal((await post('/api/memory/toggle', { path: globalFile.path, enabled: false, confirm: true }, false)).status, 403, 'needs token');
+  const off = await post('/api/memory/toggle', { path: globalFile.path, enabled: false, confirm: true });
+  assert.equal(off.data.status, 'disabled');
+  assert.equal(off.data.file.disabled, true);
+  const on = await post('/api/memory/toggle', { path: globalFile.path, enabled: true, confirm: true });
+  assert.equal(on.data.status, 'enabled');
+
+  const preview = await post('/api/memory/preview', { path: globalFile.path, content: read.data.content + '\n- One more.\n' });
+  assert.ok(preview.data.diff.some((d) => d.type === 'add' && d.text === '- One more.'));
+
+  const bad = await json(`/api/memory/file?path=${encodeURIComponent(path.join(demo.claudeHome, 'settings.json'))}`);
+  assert.equal(bad.status, 409);
+  const outside = await post('/api/memory/save', { path: path.resolve(demo.claudeHome, '..', '..', 'CLAUDE.md'), content: 'x', confirm: true });
+  assert.equal(outside.status, 409);
+});

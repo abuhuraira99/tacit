@@ -21,6 +21,7 @@ const ROUTES = [
   { re: /^#\/sessions\/?$/, name: 'sessions', load: () => import('./views/sessions.js') },
   { re: /^#\/sessions\/([\w-]+)$/, name: 'sessions', load: () => import('./views/session.js') },
   { re: /^#\/memory\/?$/, name: 'memory', load: () => import('./views/memory.js') },
+  { re: /^#\/startup\/?(?:\?.*)?$/, name: 'startup', load: () => import('./views/startup.js') },
   { re: /^#\/report\/?$/, name: 'report', load: () => import('./views/report.js') },
   { re: /^#\/settings\/?$/, name: 'settings', load: () => import('./views/settings.js') },
 ];
@@ -30,6 +31,7 @@ const NAV = [
   { name: 'repeats', href: '#/repeats', label: 'Repeats', icon: 'repeats', count: (s) => s.counts?.patterns },
   { name: 'sessions', href: '#/sessions', label: 'Sessions', icon: 'sessions', count: (s) => s.counts?.sessions },
   { name: 'memory', href: '#/memory', label: 'Memory health', icon: 'memory' },
+  { name: 'startup', href: '#/startup', label: 'Startup memory', icon: 'startup' },
   { name: 'report', href: '#/report', label: 'Report', icon: 'report' },
 ];
 

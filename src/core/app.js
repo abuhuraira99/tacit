@@ -8,6 +8,7 @@ import { forge, evaluateTrigger, KINDS } from './forge.js';
 import { applyArtifact } from './apply.js';
 import { refine, engineStatus, DEFAULT_MODEL, MODELS } from './ai.js';
 import { buildReport } from './report.js';
+import { listStartupMemory, readStartupFile, setFileEnabled, takeOutRule, restoreParkedRule, saveStartupFile, compareBackup, restoreBackup, diffLines, addStartupRule } from './memory.js';
 
 /**
  * Application state: one scan of the history, everything derived from it, and settings.
@@ -254,6 +255,35 @@ export class TacitApp extends EventEmitter {
     this._health = null;
     this._coverage = null;
     return result;
+  }
+
+  // ----- startup memory -----
+
+  startupMemory() {
+    return { scopes: listStartupMemory(this.index), claudeHome: claudeHome() };
+  }
+
+  startupFile(file) {
+    return readStartupFile(file, this.allowedRoots());
+  }
+
+  startupAction(action, b = {}) {
+    const roots = this.allowedRoots();
+    let out;
+    if (action === 'toggle') out = setFileEnabled(b.path, Boolean(b.enabled), roots);
+    else if (action === 'rule') out = takeOutRule(b.path, { line: b.line, text: String(b.text || ''), mode: b.mode === 'remove' ? 'remove' : 'pause' }, roots);
+    else if (action === 'unpause') out = restoreParkedRule(b.path, String(b.text || ''), roots);
+    else if (action === 'add') out = addStartupRule(b.path, b.text, b.section, roots);
+    else if (action === 'save') out = saveStartupFile(b.path, b.content, roots);
+    else if (action === 'preview') {
+      const now = readStartupFile(b.path, roots).content;
+      return { diff: diffLines(now, String(b.content ?? '')) };
+    } else if (action === 'compare') return compareBackup(b.path, String(b.backup || ''), roots);
+    else if (action === 'restore') out = restoreBackup(b.path, String(b.backup || ''), roots);
+    else throw httpError(400, 'Unknown action.');
+    this._health = null;
+    this._coverage = null;
+    return { ...out, file: readStartupFile(b.path, roots) };
   }
 
   async refine(patternId, kind, { scope, projectId, content, engine } = {}) {
