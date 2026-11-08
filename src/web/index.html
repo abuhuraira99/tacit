@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="tacit-token" content="__TACIT_TOKEN__" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Tacit</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="assets/fonts/Manrope-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="assets/fonts/Unbounded-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="rail" id="rail" aria-label="Main">
+        <a class="wordmark" href="#/" aria-label="Tacit home">
+          <span class="wordmark-word">tacit</span>
+          <span class="wordmark-sub">your unwritten rules</span>
+        </a>
+        <nav class="nav" id="nav"></nav>
+        <div class="rail-foot">
+          <div class="scan-state" id="scan-state" role="status" aria-live="polite">
+            <span class="scan-dot busy"></span><span>Starting</span>
+          </div>
+          <div class="rail-actions">
+            <button class="btn small ghost" id="rescan" type="button">Rescan</button>
+            <button class="btn small ghost" id="theme" type="button" aria-label="Switch theme">Theme</button>
+          </div>
+        </div>
+      </aside>
+      <main class="main" id="main" tabindex="-1">
+        <button class="btn small menu-btn" id="menu" type="button" aria-controls="rail" aria-expanded="false">Menu</button>
+        <div id="view"></div>
+      </main>
+    </div>
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+    <div class="chart-tip" id="tip" role="tooltip"></div>
+  </body>
+</html>

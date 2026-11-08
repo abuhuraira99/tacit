@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Test without optional dependencies
+        run: npm test
+      - name: Install optional dependencies
+        run: npm install --no-audit --no-fund
+      - name: Test with the Anthropic SDK installed
+        run: npm test
+      - name: CLI smoke test
+        run: |
+          node bin/tacit.js --version
+          node bin/tacit.js scan --demo
+          node bin/tacit.js habits --demo --limit 5
+          node bin/tacit.js doctor

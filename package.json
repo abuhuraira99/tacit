@@ -1,0 +1,50 @@
+{
+  "name": "tacit",
+  "version": "1.0.0",
+  "description": "Find what you keep repeating to Claude Code and turn it into CLAUDE.md rules, Skills, hooks and subagents. Runs locally; your history never leaves your machine.",
+  "type": "module",
+  "bin": {
+    "tacit": "bin/tacit.js"
+  },
+  "main": "src/core/index.js",
+  "files": [
+    "bin",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node bin/tacit.js",
+    "demo": "node bin/tacit.js --demo",
+    "test": "node --test",
+    "doctor": "node bin/tacit.js doctor"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^1.6.0"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "anthropic",
+    "claude-md",
+    "agent-skills",
+    "subagents",
+    "hooks",
+    "developer-tools",
+    "local-first",
+    "llm"
+  ],
+  "author": "Abu Huraira (https://github.com/abuhuraira99)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abuhuraira99/tacit.git"
+  },
+  "homepage": "https://github.com/abuhuraira99/tacit#readme",
+  "bugs": {
+    "url": "https://github.com/abuhuraira99/tacit/issues"
+  }
+}
